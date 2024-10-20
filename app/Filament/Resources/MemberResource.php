@@ -28,10 +28,6 @@ class MemberResource extends Resource
                     ->required(),
                 Forms\Components\TextInput::make('departemen')
                     ->required(),
-                Forms\Components\TextInput::make('no_telp')
-                    ->tel()
-                    ->required()
-                    ->label('No. Telp'),
                 Forms\Components\TextInput::make('email')
                     ->email()
                     ->required()
@@ -53,9 +49,6 @@ class MemberResource extends Resource
                 Tables\Columns\TextColumn::make('departemen')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('no_telp')
-                    ->searchable()
-                    ->label('No. Telp'),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
             ])
