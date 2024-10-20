@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('id_karyawan')->unique();
             $table->string('nama');
             $table->string('departemen');
-            $table->string('no_telp');
             $table->string('email')->unique();
             $table->timestamps();
         });
