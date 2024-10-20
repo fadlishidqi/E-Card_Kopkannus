@@ -13,7 +13,6 @@ class Member extends Authenticatable
         'id_karyawan',
         'nama',
         'departemen',
-        'no_telp',
         'email',
     ];
 

@@ -29,7 +29,6 @@ class MemberController extends Controller
             'id_karyawan' => 'required|unique:members',
             'nama' => 'required',
             'departemen' => 'required',
-            'no_telp' => 'required',
             'email' => 'required|email|unique:members',
         ]);
 
@@ -49,7 +48,6 @@ class MemberController extends Controller
             'id_karyawan' => 'required|unique:members,id_karyawan,' . $member->id,
             'nama' => 'required',
             'departemen' => 'required',
-            'no_telp' => 'required',
             'email' => 'required|email|unique:members,email,' . $member->id,
         ]);
 
