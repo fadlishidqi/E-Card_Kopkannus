@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Member;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -22,37 +22,44 @@ class UserController extends Controller
         ]);
 
         $member = Member::where('email', $credentials['email'])
-                        ->where('id_karyawan', $credentials['id_karyawan'])
-                        ->first();
+                       ->where('id_karyawan', $credentials['id_karyawan'])
+                       ->first();
 
         if ($member) {
             Auth::guard('member')->login($member);
             return redirect()->route('user.home');
         }
 
-        return back()->withErrors(['email' => 'Invalid credentials']);
+        return back()->withErrors(['email' => 'Data tidak valid']);
     }
 
     public function home()
     {
         $member = Auth::guard('member')->user();
         if (!$member) {
-            return redirect()->route('user.login.form')->withErrors(['email' => 'Please login first.']);
+            return redirect()->route('user.login.form')
+                   ->withErrors(['email' => 'Silakan login terlebih dahulu.']);
         }
-        $qrCode = $this->generateQrCode($member->id, $member->id_karyawan);
-        return view('user.home', compact('member', 'qrCode'));
+
+        return view('user.home', compact('member'));
     }
 
     public function showCard($id)
     {
-        $member = Member::findOrFail($id);
-        $qrCode = $this->generateQrCode($member->id, $member->id_karyawan);
-        return view('user.home', compact('member', 'qrCode'));
+        try {
+            $member = Member::findOrFail($id);
+            return view('user.home', compact('member'));
+        } catch (\Exception $e) {
+            Log::error('Error in showCard: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan saat menampilkan kartu');
+        }
     }
 
-    private function generateQrCode($id, $id_karyawan)
+    public function logout(Request $request) 
     {
-        $url = route('user.card', ['id' => $id]) . "?id_karyawan={$id_karyawan}";
-        return QrCode::size(200)->generate($url);
+        Auth::guard('member')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->route('user.login.form');
     }
 }
